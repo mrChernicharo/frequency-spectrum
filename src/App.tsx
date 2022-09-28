@@ -1,5 +1,10 @@
 import { type Component, createMemo, For } from 'solid-js';
-import { rawData, startFromFile } from './audioSource';
+import {
+	rawData,
+	trackDuration,
+	trackElapsed,
+	startFromFile,
+} from './audioSource';
 import { arc } from 'd3';
 
 const arcBuilder = arc();
@@ -36,6 +41,28 @@ const RadialGraph: Component = () => {
 	);
 };
 
+const ProgressIndicator: Component = () => {
+	return (
+		<div
+			style={{
+				position: 'fixed',
+				top: 0,
+				width: '100vw',
+				background: 'black',
+				height: '10px',
+			}}
+		>
+			<div
+				style={{
+					width: `${trackElapsed()}%`,
+					background: '#0f4',
+					height: '100%',
+				}}
+			></div>
+		</div>
+	);
+};
+
 const App: Component = () => {
 	return (
 		<div
@@ -51,6 +78,8 @@ const App: Component = () => {
 			>
 				<RadialGraph />
 			</svg>
+
+			<ProgressIndicator />
 		</div>
 	);
 };

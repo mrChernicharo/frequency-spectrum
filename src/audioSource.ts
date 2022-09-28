@@ -1,6 +1,8 @@
 import { createSignal } from 'solid-js';
 
 const [rawData, setRawData] = createSignal<number[]>([]);
+const [trackDuration, setTrackDuration] = createSignal(0);
+const [trackElapsed, setTrackElapsed] = createSignal(0);
 
 export const startFromFile = async () => {
 	const res = await fetch('/winter.mp3');
@@ -11,6 +13,7 @@ export const startFromFile = async () => {
 
 	const source = context.createBufferSource();
 	source.buffer = audioBuffer;
+	setTrackDuration(source.buffer.duration);
 
 	const analyzer = context.createAnalyser();
 	analyzer.fftSize = 512;
@@ -24,7 +27,10 @@ export const startFromFile = async () => {
 
 	const update = () => {
 		analyzer.getByteFrequencyData(dataArray);
-		// console.log(Array.from(dataArray));
+
+		setTrackElapsed(
+			(source.context.currentTime / source.buffer?.duration!) * 100
+		);
 		setRawData(Array.from(dataArray));
 
 		requestAnimationFrame(update);
@@ -33,4 +39,4 @@ export const startFromFile = async () => {
 	requestAnimationFrame(update);
 };
 
-export { rawData };
+export { rawData, trackDuration, trackElapsed };
