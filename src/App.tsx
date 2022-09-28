@@ -1,7 +1,8 @@
-import { type Component, createMemo, For } from 'solid-js';
+import { type Component, createMemo, For, Show } from 'solid-js';
 import {
 	rawData,
 	trackDuration,
+	isPlaying,
 	trackElapsed,
 	startFromFile,
 } from './audioSource';
@@ -15,7 +16,6 @@ const RadialGraph: Component<{
 }> = props => {
 	const computed = createMemo(() => {
 		const data = rawData();
-
 		const total = data.reduce((acc, v) => acc + v, 0);
 
 		const highCount = data.filter(d => d > 32).length;
@@ -82,19 +82,31 @@ const ProgressIndicator: Component = () => {
 const App: Component = () => {
 	return (
 		<div
-			onClick={startFromFile}
-			style={{ width: '100vw', height: '100vh' }}
+			style={{
+				width: '100vw',
+				height: '100vh',
+				display: 'flex',
+				'justify-content': 'center',
+				'align-items': 'center',
+			}}
 		>
 			{/* {JSON.stringify(rawData(), null, 2)} */}
-			<svg
-				width="100%"
-				height="100%"
-				viewBox="-100 -150 200 200"
-				preserveAspectRatio="xMidYMid meet"
+			<Show
+				when={isPlaying()}
+				fallback={
+					<button onClick={startFromFile}>Click to start</button>
+				}
 			>
-				<RadialGraph color={interpolateSinebow} scale={1.5} />
-				<RadialGraph color={interpolateInferno} scale={1} />
-			</svg>
+				<svg
+					width="100%"
+					height="100%"
+					viewBox="-100 -150 200 200"
+					preserveAspectRatio="xMidYMid meet"
+				>
+					<RadialGraph color={interpolateSinebow} scale={2.5} />
+					<RadialGraph color={interpolateInferno} scale={1} />
+				</svg>
+			</Show>
 
 			<ProgressIndicator />
 		</div>

@@ -3,9 +3,11 @@ import { createSignal } from 'solid-js';
 const [rawData, setRawData] = createSignal<number[]>([]);
 const [trackDuration, setTrackDuration] = createSignal(0);
 const [trackElapsed, setTrackElapsed] = createSignal(0);
-
+const [isPlaying, setIsPlaying] = createSignal(false);
 export const startFromFile = async () => {
+	if (isPlaying()) return;
 	const res = await fetch('/winter.mp3');
+	// const res = await fetch('/bolero.mp3');
 	const byteArray = await res.arrayBuffer();
 
 	const context = new AudioContext();
@@ -34,10 +36,12 @@ export const startFromFile = async () => {
 		const orig = Array.from(dataArray);
 		setRawData([[...orig].reverse(), orig].flat());
 
+		console.log({ raw: rawData().filter(v => v > 0) });
 		requestAnimationFrame(update);
 	};
 
+	setIsPlaying(true);
 	requestAnimationFrame(update);
 };
 
-export { rawData, trackDuration, trackElapsed };
+export { rawData, trackDuration, trackElapsed, isPlaying };
