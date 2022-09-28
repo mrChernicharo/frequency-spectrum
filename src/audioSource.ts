@@ -27,11 +27,12 @@ export const startFromFile = async () => {
 
 	const update = () => {
 		analyzer.getByteFrequencyData(dataArray);
-
 		setTrackElapsed(
 			(source.context.currentTime / source.buffer?.duration!) * 100
 		);
-		setRawData(Array.from(dataArray));
+
+		const orig = Array.from(dataArray);
+		setRawData([[...orig].reverse(), orig].flat());
 
 		requestAnimationFrame(update);
 	};
